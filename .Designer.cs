@@ -32,10 +32,12 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.btnShow = new System.Windows.Forms.Button();
+            this.btnReset = new System.Windows.Forms.Button();
             this.lblResult = new System.Windows.Forms.Label();
             this.txtA = new System.Windows.Forms.TextBox();
             this.txtB = new System.Windows.Forms.TextBox();
             this.txtC = new System.Windows.Forms.TextBox();
+            this.lblLiveVisualizer = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -86,11 +88,32 @@
             this.btnShow.ForeColor = System.Drawing.Color.White;
             this.btnShow.Location = new System.Drawing.Point(31, 204);
             this.btnShow.Name = "btnShow";
-            this.btnShow.Size = new System.Drawing.Size(321, 42);
+            this.btnShow.Padding = new System.Windows.Forms.Padding(0);
+            this.btnShow.Size = new System.Drawing.Size(198, 42);
             this.btnShow.TabIndex = 3;
             this.btnShow.Text = "Show Triangle Type";
+            this.btnShow.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnShow.UseCompatibleTextRendering = false;
             this.btnShow.UseVisualStyleBackColor = false;
             this.btnShow.Click += new System.EventHandler(this.btnShow_Click);
+            // 
+            // btnReset
+            // 
+            this.btnReset.BackColor = System.Drawing.Color.White;
+            this.btnReset.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(209)))), ((int)(((byte)(213)))), ((int)(((byte)(219)))));
+            this.btnReset.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnReset.Font = new System.Drawing.Font("Segoe UI Semibold", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnReset.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(55)))), ((int)(((byte)(65)))), ((int)(((byte)(81)))));
+            this.btnReset.Location = new System.Drawing.Point(235, 204);
+            this.btnReset.Name = "btnReset";
+            this.btnReset.Padding = new System.Windows.Forms.Padding(0);
+            this.btnReset.Size = new System.Drawing.Size(117, 42);
+            this.btnReset.TabIndex = 10;
+            this.btnReset.Text = "Reset";
+            this.btnReset.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnReset.UseCompatibleTextRendering = false;
+            this.btnReset.UseVisualStyleBackColor = false;
+            this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
             // 
             // lblResult
             // 
@@ -131,13 +154,24 @@
             this.txtC.Size = new System.Drawing.Size(220, 30);
             this.txtC.TabIndex = 7;
             // 
+            // lblLiveVisualizer
+            // 
+            this.lblLiveVisualizer.AutoSize = true;
+            this.lblLiveVisualizer.Font = new System.Drawing.Font("Segoe UI Semibold", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblLiveVisualizer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(41)))), ((int)(((byte)(59)))));
+            this.lblLiveVisualizer.Location = new System.Drawing.Point(378, 27);
+            this.lblLiveVisualizer.Name = "lblLiveVisualizer";
+            this.lblLiveVisualizer.Size = new System.Drawing.Size(200, 25);
+            this.lblLiveVisualizer.TabIndex = 9;
+            this.lblLiveVisualizer.Text = "Live Triangle Visualizer";
+            // 
             // pictureBox1
             // 
             this.pictureBox1.BackColor = System.Drawing.Color.White;
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox1.Location = new System.Drawing.Point(378, 27);
+            this.pictureBox1.Location = new System.Drawing.Point(378, 58);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(390, 390);
+            this.pictureBox1.Size = new System.Drawing.Size(390, 359);
             this.pictureBox1.TabIndex = 8;
             this.pictureBox1.TabStop = false;
             // 
@@ -146,11 +180,13 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.lblLiveVisualizer);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.txtC);
             this.Controls.Add(this.txtB);
             this.Controls.Add(this.txtA);
             this.Controls.Add(this.lblResult);
+            this.Controls.Add(this.btnReset);
             this.Controls.Add(this.btnShow);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -169,10 +205,12 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button btnShow;
+        private System.Windows.Forms.Button btnReset;
         private System.Windows.Forms.Label lblResult;
         private System.Windows.Forms.TextBox txtA;
         private System.Windows.Forms.TextBox txtB;
         private System.Windows.Forms.TextBox txtC;
+        private System.Windows.Forms.Label lblLiveVisualizer;
         private System.Windows.Forms.PictureBox pictureBox1;
     }
 }

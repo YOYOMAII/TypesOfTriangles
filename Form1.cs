@@ -1,43 +1,80 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// Form1 — main window for "Types of Triangles".
+//
+// Until the user clicks "Show Triangle Type" once, lblResult and the diagram stay on the default
+// prompts. After that, both update live as sides change. Reset clears sides and locks again.
+
+using System;
+using System.Globalization;
 using System.Windows.Forms;
 
 namespace TypesOfTriangles
 {
     public partial class Form1 : Form
     {
-        // Controls whether the triangle should be drawn in the preview box.
-        private bool drawTriangle = false;
-        // Stores the last valid side lengths entered by the user.
-        private double triangleA = 0;
-        private double triangleB = 0;
-        private double triangleC = 0;
+        private readonly LiveTriangleVisualizer liveTriangleVisualizer;
+        private bool liveUnlocked;
 
-        // Initializes the form and wires up UI events.
         public Form1()
         {
             InitializeComponent();
-            pictureBox1.Paint += new PaintEventHandler(pictureBox1_Paint);
+            liveTriangleVisualizer = new LiveTriangleVisualizer(pictureBox1, txtA, txtB, txtC, () => liveUnlocked);
+
             txtA.KeyPress += NumericTextBox_KeyPress;
             txtB.KeyPress += NumericTextBox_KeyPress;
             txtC.KeyPress += NumericTextBox_KeyPress;
+
+            txtA.TextChanged += SideText_TextChanged;
+            txtB.TextChanged += SideText_TextChanged;
+            txtC.TextChanged += SideText_TextChanged;
         }
 
-        // Validates input, determines triangle type, and triggers redraw.
-        // Special thanks to Lin Htut Khine for writing the original triangle-type logic
-        // (valid triangle check + Equilateral/Isosceles/Scalene classification) used here.
+        private void SideText_TextChanged(object sender, EventArgs e)
+        {
+            if (liveUnlocked)
+            {
+                RefreshTriangleTypeResult();
+            }
+        }
+
         private void btnShow_Click(object sender, EventArgs e)
         {
-            drawTriangle = false;
+            liveUnlocked = true;
+            RefreshTriangleTypeResult();
             pictureBox1.Invalidate();
+        }
 
-            if (!double.TryParse(txtA.Text, out double a) || !double.TryParse(txtB.Text, out double b) || !double.TryParse(txtC.Text, out double c))
+        private void btnReset_Click(object sender, EventArgs e)
+        {
+            liveUnlocked = false;
+            txtA.Clear();
+            txtB.Clear();
+            txtC.Clear();
+            lblResult.Text = IdleResultText();
+            txtA.Focus();
+            pictureBox1.Invalidate();
+        }
+
+        private static string IdleResultText()
+        {
+            return "Result will appear here";
+        }
+
+        // Special thanks to Lin Htut Khine for the original triangle-type logic used here.
+        private void RefreshTriangleTypeResult()
+        {
+            string sa = txtA.Text.Trim();
+            string sb = txtB.Text.Trim();
+            string sc = txtC.Text.Trim();
+
+            if (sa.Length == 0 && sb.Length == 0 && sc.Length == 0)
+            {
+                lblResult.Text = IdleResultText();
+                return;
+            }
+
+            if (!double.TryParse(sa, NumberStyles.Float | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out double a) ||
+                !double.TryParse(sb, NumberStyles.Float | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out double b) ||
+                !double.TryParse(sc, NumberStyles.Float | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out double c))
             {
                 lblResult.Text = "Please enter valid numbers for Side A, Side B, and Side C.";
                 return;
@@ -56,21 +93,20 @@ namespace TypesOfTriangles
             else
             {
                 if (a == b && b == c)
+                {
                     lblResult.Text = "Type: Equilateral triangle";
+                }
                 else if (a == b || b == c || a == c)
+                {
                     lblResult.Text = "Type: Isosceles triangle";
+                }
                 else
+                {
                     lblResult.Text = "Type: Scalene triangle";
-
-                drawTriangle = true;
-                triangleA = a;
-                triangleB = b;
-                triangleC = c;
-                pictureBox1.Invalidate();
+                }
             }
         }
 
-        // Allows only numeric input (digits and one decimal point) in side text boxes.
         private void NumericTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (char.IsControl(e.KeyChar))
@@ -93,71 +129,6 @@ namespace TypesOfTriangles
             if (e.KeyChar == '.' && textBox.Text.Contains("."))
             {
                 e.Handled = true;
-            }
-        }
-
-        // Draws a scaled triangle in the picture box using the last valid side lengths.
-        private void pictureBox1_Paint(object sender, PaintEventArgs e)
-        {
-            if (drawTriangle)
-            {
-                var g = e.Graphics;
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-
-                double a = triangleA;
-                double b = triangleB;
-                double c = triangleC;
-
-                double xC = (b * b + c * c - a * a) / (2.0 * c);
-                double yC2 = (b * b) - (xC * xC);
-
-                if (yC2 <= 0)
-                {
-                    return;
-                }
-
-                double yC = Math.Sqrt(yC2);
-
-                var pA = new PointF(0f, 0f);
-                var pB = new PointF((float)c, 0f);
-                var pC = new PointF((float)xC, (float)yC);
-
-                float minX = Math.Min(pA.X, Math.Min(pB.X, pC.X));
-                float maxX = Math.Max(pA.X, Math.Max(pB.X, pC.X));
-                float minY = Math.Min(pA.Y, Math.Min(pB.Y, pC.Y));
-                float maxY = Math.Max(pA.Y, Math.Max(pB.Y, pC.Y));
-
-                float modelWidth = maxX - minX;
-                float modelHeight = maxY - minY;
-                float margin = 20f;
-
-                float availableWidth = pictureBox1.ClientSize.Width - (margin * 2f);
-                float availableHeight = pictureBox1.ClientSize.Height - (margin * 2f);
-
-                if (modelWidth <= 0 || modelHeight <= 0 || availableWidth <= 0 || availableHeight <= 0)
-                {
-                    return;
-                }
-
-                float scale = Math.Min(availableWidth / modelWidth, availableHeight / modelHeight);
-
-                Func<PointF, PointF> toScreen = p =>
-                {
-                    float x = (p.X - minX) * scale + margin;
-                    float y = pictureBox1.ClientSize.Height - (((p.Y - minY) * scale) + margin);
-                    return new PointF(x, y);
-                };
-
-                PointF sA = toScreen(pA);
-                PointF sB = toScreen(pB);
-                PointF sC = toScreen(pC);
-
-                using (var fillBrush = new SolidBrush(Color.FromArgb(60, 100, 149, 237)))
-                using (var pen = new Pen(Color.RoyalBlue, 2f))
-                {
-                    g.FillPolygon(fillBrush, new[] { sA, sB, sC });
-                    g.DrawPolygon(pen, new[] { sA, sB, sC });
-                }
             }
         }
     }
