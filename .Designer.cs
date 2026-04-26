@@ -36,6 +36,7 @@
             this.txtA = new System.Windows.Forms.TextBox();
             this.txtB = new System.Windows.Forms.TextBox();
             this.txtC = new System.Windows.Forms.TextBox();
+            this.lblLiveVisualizer = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -131,13 +132,24 @@
             this.txtC.Size = new System.Drawing.Size(220, 30);
             this.txtC.TabIndex = 7;
             // 
+            // lblLiveVisualizer
+            // 
+            this.lblLiveVisualizer.AutoSize = true;
+            this.lblLiveVisualizer.Font = new System.Drawing.Font("Segoe UI Semibold", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblLiveVisualizer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(41)))), ((int)(((byte)(59)))));
+            this.lblLiveVisualizer.Location = new System.Drawing.Point(378, 27);
+            this.lblLiveVisualizer.Name = "lblLiveVisualizer";
+            this.lblLiveVisualizer.Size = new System.Drawing.Size(200, 25);
+            this.lblLiveVisualizer.TabIndex = 9;
+            this.lblLiveVisualizer.Text = "Live Triangle Visualizer";
+            // 
             // pictureBox1
             // 
             this.pictureBox1.BackColor = System.Drawing.Color.White;
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox1.Location = new System.Drawing.Point(378, 27);
+            this.pictureBox1.Location = new System.Drawing.Point(378, 58);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(390, 390);
+            this.pictureBox1.Size = new System.Drawing.Size(390, 359);
             this.pictureBox1.TabIndex = 8;
             this.pictureBox1.TabStop = false;
             // 
@@ -146,6 +158,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.lblLiveVisualizer);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.txtC);
             this.Controls.Add(this.txtB);
@@ -173,6 +186,7 @@
         private System.Windows.Forms.TextBox txtA;
         private System.Windows.Forms.TextBox txtB;
         private System.Windows.Forms.TextBox txtC;
+        private System.Windows.Forms.Label lblLiveVisualizer;
         private System.Windows.Forms.PictureBox pictureBox1;
     }
 }
