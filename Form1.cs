@@ -4,6 +4,7 @@
 // prompts. After that, both update live as sides change. Reset clears sides and locks again.
 
 using System;
+using System.Globalization;
 using System.Windows.Forms;
 
 namespace TypesOfTriangles
@@ -71,7 +72,9 @@ namespace TypesOfTriangles
                 return;
             }
 
-            if (!double.TryParse(sa, out double a) || !double.TryParse(sb, out double b) || !double.TryParse(sc, out double c))
+            if (!double.TryParse(sa, NumberStyles.Float | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out double a) ||
+                !double.TryParse(sb, NumberStyles.Float | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out double b) ||
+                !double.TryParse(sc, NumberStyles.Float | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out double c))
             {
                 lblResult.Text = "Please enter valid numbers for Side A, Side B, and Side C.";
                 return;

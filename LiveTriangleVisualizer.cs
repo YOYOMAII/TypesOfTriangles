@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Globalization;
 using System.Windows.Forms;
 
 namespace TypesOfTriangles
@@ -81,7 +82,9 @@ namespace TypesOfTriangles
         private static bool TryParsePositiveSides(string sa, string sb, string sc, out double a, out double b, out double c)
         {
             a = b = c = 0;
-            if (!double.TryParse(sa, out a) || !double.TryParse(sb, out b) || !double.TryParse(sc, out c))
+            if (!double.TryParse(sa, NumberStyles.Float | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out a) ||
+                !double.TryParse(sb, NumberStyles.Float | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out b) ||
+                !double.TryParse(sc, NumberStyles.Float | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out c))
             {
                 return false;
             }
