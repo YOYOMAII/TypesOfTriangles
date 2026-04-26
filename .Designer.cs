@@ -32,6 +32,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.btnShow = new System.Windows.Forms.Button();
+            this.btnReset = new System.Windows.Forms.Button();
             this.lblResult = new System.Windows.Forms.Label();
             this.txtA = new System.Windows.Forms.TextBox();
             this.txtB = new System.Windows.Forms.TextBox();
@@ -87,11 +88,32 @@
             this.btnShow.ForeColor = System.Drawing.Color.White;
             this.btnShow.Location = new System.Drawing.Point(31, 204);
             this.btnShow.Name = "btnShow";
-            this.btnShow.Size = new System.Drawing.Size(321, 42);
+            this.btnShow.Padding = new System.Windows.Forms.Padding(0);
+            this.btnShow.Size = new System.Drawing.Size(198, 42);
             this.btnShow.TabIndex = 3;
             this.btnShow.Text = "Show Triangle Type";
+            this.btnShow.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnShow.UseCompatibleTextRendering = false;
             this.btnShow.UseVisualStyleBackColor = false;
             this.btnShow.Click += new System.EventHandler(this.btnShow_Click);
+            // 
+            // btnReset
+            // 
+            this.btnReset.BackColor = System.Drawing.Color.White;
+            this.btnReset.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(209)))), ((int)(((byte)(213)))), ((int)(((byte)(219)))));
+            this.btnReset.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnReset.Font = new System.Drawing.Font("Segoe UI Semibold", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnReset.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(55)))), ((int)(((byte)(65)))), ((int)(((byte)(81)))));
+            this.btnReset.Location = new System.Drawing.Point(235, 204);
+            this.btnReset.Name = "btnReset";
+            this.btnReset.Padding = new System.Windows.Forms.Padding(0);
+            this.btnReset.Size = new System.Drawing.Size(117, 42);
+            this.btnReset.TabIndex = 10;
+            this.btnReset.Text = "Reset";
+            this.btnReset.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnReset.UseCompatibleTextRendering = false;
+            this.btnReset.UseVisualStyleBackColor = false;
+            this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
             // 
             // lblResult
             // 
@@ -164,6 +186,7 @@
             this.Controls.Add(this.txtB);
             this.Controls.Add(this.txtA);
             this.Controls.Add(this.lblResult);
+            this.Controls.Add(this.btnReset);
             this.Controls.Add(this.btnShow);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -182,6 +205,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button btnShow;
+        private System.Windows.Forms.Button btnReset;
         private System.Windows.Forms.Label lblResult;
         private System.Windows.Forms.TextBox txtA;
         private System.Windows.Forms.TextBox txtB;

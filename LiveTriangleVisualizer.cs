@@ -22,8 +22,8 @@ namespace TypesOfTriangles
     /// </list>
     /// <para>
     /// Validation rules for drawing match the idea of a real triangle: positive sides and the
-    /// triangle inequality. That is independent of the form's "Show Triangle Type" button, which
-    /// updates <c>lblResult</c> only.
+    /// triangle inequality. Until the user presses "Show Triangle Type", the preview shows a short
+    /// prompt; after that, the form and this control both follow the text boxes live.
     /// </para>
     /// <para><b>How the shape is computed</b></para>
     /// <para>
@@ -36,7 +36,8 @@ namespace TypesOfTriangles
     /// <para>
     /// Model coordinates are scaled uniformly to fit inside the picture box with a margin. The Y axis
     /// is flipped when mapping to pixels because GDI+ Y grows downward, while school-style diagrams
-    /// usually have Y up.
+    /// usually have Y up. Each edge is labeled <c>A</c>, <c>B</c>, or <c>C</c> to match Side A / B / C
+    /// on the form (the segment with length <c>a</c> is labeled A, etc.).
     /// </para>
     /// </remarks>
     internal sealed class LiveTriangleVisualizer
@@ -45,16 +46,19 @@ namespace TypesOfTriangles
         private readonly TextBox txtA;
         private readonly TextBox txtB;
         private readonly TextBox txtC;
+        private readonly Func<bool> isLiveUnlocked;
 
         /// <summary>
         /// Attaches live preview behavior to the given controls (does not remove handlers).
         /// </summary>
-        public LiveTriangleVisualizer(PictureBox pictureBox, TextBox txtA, TextBox txtB, TextBox txtC)
+        /// <param name="isLiveUnlocked">When false, the preview stays on a short prompt until the user has pressed Show once (Form1 sets this).</param>
+        public LiveTriangleVisualizer(PictureBox pictureBox, TextBox txtA, TextBox txtB, TextBox txtC, Func<bool> isLiveUnlocked)
         {
             this.pictureBox = pictureBox;
             this.txtA = txtA;
             this.txtB = txtB;
             this.txtC = txtC;
+            this.isLiveUnlocked = isLiveUnlocked ?? (() => true);
 
             pictureBox.Paint += PictureBoxOnPaint;
             txtA.TextChanged += OnSideTextChanged;
@@ -101,19 +105,17 @@ namespace TypesOfTriangles
             var g = e.Graphics;
             g.SmoothingMode = SmoothingMode.AntiAlias;
 
+            if (!isLiveUnlocked())
+            {
+                DrawCenteredHint(g, "Press Show Triangle Type.");
+                return;
+            }
+
             // Not enough valid geometry to draw — show a simple centered hint instead of a blank box.
             if (!TryParsePositiveSides(txtA.Text, txtB.Text, txtC.Text, out double a, out double b, out double c)
                 || !IsValidTriangle(a, b, c))
             {
-                const string hint = "Triangle shows here.";
-                using (var hintFont = new Font("Segoe UI", 11f, FontStyle.Bold, GraphicsUnit.Point))
-                using (var brush = new SolidBrush(Color.FromArgb(180, 71, 85, 105)))
-                {
-                    var rect = new RectangleF(16f, 16f, pictureBox.ClientSize.Width - 32f, pictureBox.ClientSize.Height - 32f);
-                    var format = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
-                    g.DrawString(hint, hintFont, brush, rect, format);
-                }
-
+                DrawCenteredHint(g, "Triangle shows here.");
                 return;
             }
 
@@ -172,6 +174,64 @@ namespace TypesOfTriangles
                 g.FillPolygon(fillBrush, new[] { sA, sB, sC });
                 g.DrawPolygon(pen, new[] { sA, sB, sC });
             }
+
+            // Label each edge to match Side A / B / C on the form (lengths a, b, c in the model).
+            // In this layout: |AB| = c → Side C, |AC| = b → Side B, |BC| = a → Side A.
+            var centroid = new PointF((sA.X + sB.X + sC.X) / 3f, (sA.Y + sB.Y + sC.Y) / 3f);
+            const float labelOffset = 16f;
+            using (var labelFont = new Font("Segoe UI", 10.5f, FontStyle.Bold, GraphicsUnit.Point))
+            using (var labelBrush = new SolidBrush(Color.FromArgb(245, 30, 64, 175)))
+            {
+                DrawEdgeSideLabel(g, labelFont, labelBrush, "A", sB, sC, centroid, labelOffset);
+                DrawEdgeSideLabel(g, labelFont, labelBrush, "B", sA, sC, centroid, labelOffset);
+                DrawEdgeSideLabel(g, labelFont, labelBrush, "C", sA, sB, centroid, labelOffset);
+            }
+        }
+
+        private void DrawCenteredHint(Graphics g, string hint)
+        {
+            using (var hintFont = new Font("Segoe UI", 11f, FontStyle.Bold, GraphicsUnit.Point))
+            using (var brush = new SolidBrush(Color.FromArgb(180, 71, 85, 105)))
+            {
+                var rect = new RectangleF(16f, 16f, pictureBox.ClientSize.Width - 32f, pictureBox.ClientSize.Height - 32f);
+                var format = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
+                g.DrawString(hint, hintFont, brush, rect, format);
+            }
+        }
+
+        /// <summary>
+        /// Draws a side letter (A/B/C) near the middle of an edge, nudged outward away from the triangle center.
+        /// </summary>
+        private static void DrawEdgeSideLabel(Graphics g, Font font, Brush brush, string text, PointF v0, PointF v1, PointF insideRef, float offset)
+        {
+            float mx = (v0.X + v1.X) * 0.5f;
+            float my = (v0.Y + v1.Y) * 0.5f;
+            float dx = v1.X - v0.X;
+            float dy = v1.Y - v0.Y;
+            float len = (float)Math.Sqrt(dx * dx + dy * dy);
+            if (len < 1e-3f)
+            {
+                return;
+            }
+
+            // Unit perpendicular to the edge (one of the two outward normals).
+            float nx = -dy / len;
+            float ny = dx / len;
+
+            // Pick the normal that points away from the centroid so labels sit outside the triangle.
+            float vx = insideRef.X - mx;
+            float vy = insideRef.Y - my;
+            if (nx * vx + ny * vy > 0f)
+            {
+                nx = -nx;
+                ny = -ny;
+            }
+
+            float px = mx + nx * offset;
+            float py = my + ny * offset;
+
+            SizeF sz = g.MeasureString(text, font);
+            g.DrawString(text, font, brush, px - sz.Width * 0.5f, py - sz.Height * 0.5f);
         }
     }
 }
